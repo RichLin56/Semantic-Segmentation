@@ -1,0 +1,123 @@
+{	
+	"training":
+		{
+			"gpu_id": 0,
+			"num_epochs": 150,
+			"val_metric": "binarydice", 						// One of: "None", "dice", "binarydice"
+			"output_dir": "path/to/outputdir",
+			"test_afterwards": "False", 						// Option to test after training
+			"augmentation": 							// Applied to train split 
+			{
+				"random_flip":
+				{
+					"lr": "True",						// 50% chance to flip left&right
+					"ud": "True"						// 50% chance to flip up&down
+				},
+				"random_affine":
+				{
+					"ACTIVATE": "True",
+					"rotation": 10,  					// deg
+					"translation": [0.1, 0.1], 				// fraction of [width, height]
+					"scale": 0.2,  						// fraction of image size
+					"shear": 0   						// deg
+				},
+				"random_crop":
+				{
+					"ACTIVATE": "False",
+					"size": 128						// pixel			
+				},
+				"random_gaussian_blur":
+				{
+					"ACTIVATE": "False"				
+				}
+			},
+			"data_processing": 							//Processing applied to train and validation split 
+			{
+				"resize":
+				{
+					"ACTIVATE": "False",
+					"size": 256						// pixel
+				},
+				"center_crop":
+				{
+					"ACTIVATE": "False",
+					"size": 128						// pixel			
+				},
+				"normalize":
+				{
+					"ACTIVATE": "True",
+					"mode": "255"					// One of: "max", "min_max", "int_value"
+				}
+			},
+			"data": 
+			{
+				"root": "path/to/Dataset",
+				"extension_image": "",  			// One of: "", ".npz", ".npy", ".png", ".jpg", ...
+				"extension_mask": "", 				// One of: "", ".npz", ".npy", ".png", ".jpg", ...
+				"batch_size": 2,
+				"num_workers": 0
+			},   
+			"network": 								// One of: "fcdensenet", "unet"
+			{
+				"name": "fcdensenet", 
+				"checkpoint": "path/to/checkpoint.pth.tar", 			// Pretrained from path/to/checkpoint.pth.tar
+				"in_channels": 1,						// Further arguments possible
+				"out_channels": 1,						// ...
+				"growth_rate": 12, 						// ...
+				"bottleneck_layers": 6					        // ...
+			},			
+			"loss_function": 						
+			{
+				"name": "binarydiceloss", 					// One of: "binaryceloss", "celoss", "binarydiceloss", "diceloss"
+				"pos_weight": 10 						// Further arguments possible
+			},	
+			"optimizer":  							
+			{
+				"name": "adam",							// One of: pytorch optimizers
+				"lr": 0.001							// Further arguments possbile
+			},
+			"scheduler": 
+			{
+				"ACTIVATE": "True",
+				"name": "reducelronplateau", 					// One of: pytorch schedulers (Only "reducelronplateau" tested)
+				"factor": 0.1,							// Further arguments possible
+				"patience": 8,							// ...
+				"cooldown": 0							// ...
+			}
+
+		},
+	"prediction":
+	{
+		"gpu_id": 0,
+		"output_dir": "path/to/outputdir",
+		"input_dir": "path/to/inputdir",
+		"data_processing": 								//Processing applied to train and validation split 
+		{
+			"resize":
+			{
+				"ACTIVATE": "False",
+				"size": 256							// pixel
+			},
+			"center_crop":
+			{
+				"ACTIVATE": "False",
+				"size": 128							// pixel			
+			},
+			"normalize":
+			{
+				"ACTIVATE": "True",
+				"mode": "255"							// One of: "max", "min_max", "int_value"
+			}
+		},
+		"network": 									// One of: "fcdensenet", "unet"
+		{
+			"name": "fcdensenet", 
+			"checkpoint": "path/to/checkpoint.pth.tar", 				// Pretrained from path/to/checkpoint.pth.tar
+			"in_channels": 1,							// Further arguments possible
+			"out_channels": 1,							// ...
+			"growth_rate": 12, 							// ...
+			"bottleneck_layers": 6							// ...
+		}
+	}	
+
+}
