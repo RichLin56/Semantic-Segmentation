@@ -49,7 +49,7 @@ input_dir = cfg['input_dir']
 
 
 # Define device
-device = torch.device(cfg['gpu_id'] if torch.cuda.is_available() else "cpu")
+device = torch.device(cfg['gpu_id'] if (torch.cuda.is_available() and cfg['gpu_id'] in range(torch.cuda.device_count()))  else "cpu")
 __LOGGER.info('Setting up device, using {}...'.format(device))
 # Setup augmentation & data processing
 __LOGGER.info('Setting up data processing...')
