@@ -35,7 +35,7 @@ class ModelBuilder(Builder):
         ) if item[0] in inspect.getargspec(self._Builder__build.__init__).args)
         self.model = self._Builder__build(**params_from_dict).to(device)
         if group_cfg['checkpoint']: 
-            checkpoint = torch.load(group_cfg['checkpoint'])           
+            checkpoint = torch.load(group_cfg['checkpoint'], map_location=device)           
             self.model.load_state_dict(checkpoint['state_dict'])
 
 
