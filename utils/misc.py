@@ -10,6 +10,7 @@ import inspect
 import os
 from datetime import datetime
 
+import numpy as np
 import torch
 import torch.optim
 
@@ -55,6 +56,27 @@ def one_hot_encoder(labels, num_classes):
     one_hot = torch.zeros(batch_size, num_classes, height, width)
     one_hot = one_hot.scatter_(1, labels.unsqueeze(1), 1.0)
     return one_hot
+
+
+def overlay_img_mask():
+    pass
+
+
+def tensor_to_numpy(tensor):
+    return tensor.detach().cpu().numpy()
+
+
+def scale_uint8(array):
+    if array.max() > 0:
+        array = array / array.max()
+        array = np.array(array * 255, dtype=np.uint8)
+    return array
+
+
+def chw_to_hwc(array):
+    array = np.transpose(array, axes=(1, 2, 0))
+    return array
+
 
 
 # Define a class to log values during training
