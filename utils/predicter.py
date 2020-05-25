@@ -13,6 +13,7 @@ from PIL import Image
 import numpy as np
 import torch
 
+import utils.misc as misc
 import utils.augmentation as augmentation
 
 
@@ -41,7 +42,7 @@ class Predicter(object):
             output = torch.softmax(output)    
         output = output.squeeze(0)    
 
-        return output.cpu().detach().numpy()    
+        return misc.tensor_to_numpy(output), misc.tensor_to_numpy(image)    
 
     def __threshold(self, image):
         channels = image.shape[0]
@@ -54,24 +55,25 @@ class Predicter(object):
 
     def predict(self, image_path):
         image = np.array(Image.open(image_path))
-        output = self.__predict(image)
-        output = self.__threshold(output)
+        outputs, inputs = self.__predict(image)
+        outputs = self.__threshold(outputs)
 
-        # TODO: 
-        # 1. Convert output into colored class map
-        # 2. Create overlay with input
-        # 3. Save into output_dir
-        if output.shape[0] == 1:
-            img_output = Image.fromarray(np.array(output[0]* (255 / output[0].max()), dtype=np.uint8))
+        img_input = misc.scale_uint8(inputs[0])
+        img_input = misc.chw_to_hwc(img_input)        
+        if img_input.shape[-1] == 1:
+            img_input = Image.fromarray(img_input[:, :, 0])
         else:
-            img_output = Image.fromarray(np.array(output[0]* (255 / output.max()), dtype=np.uint8))
-        Image.open(image_path).save(os.path.join(self.output_dir, "org_" + os.path.basename(image_path)))
+            img_input = Image.fromarray(img_input)
+
+        img_output = np.array([misc.scale_uint8(outputs[i]) for i in range(outputs.shape[0])])
+        img_output = misc.chw_to_hwc(img_output)
+        if img_output.shape[-1] == 1:
+            img_output = Image.fromarray(img_output[:, :, 0])
+        else:
+            # TODO: Does this case occur? If so: Implement this
+            pass
         img_output.save(os.path.join(self.output_dir, "pred_" + os.path.basename(image_path)))
-
-
-
-
-
+        img_input.save(os.path.join(self.output_dir, "org_" + os.path.basename(image_path)))
 
 
 
