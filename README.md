@@ -1,6 +1,61 @@
 # Semantic-Segmentation
+
 This repository is a pytorch implementation of semantic segmentation models. It comes with a general dataloader and functions for data transforming and augmentation based on numpy and scikit-image. 
-This repository aims at providing a small framework to train and test semantic segmentation models.
+This repository aims at providing a small framework to easily train and test semantic segmentation models.
+
+## Requirements
+#### Python >= 3.7, CUDA Toolkit 10.1
+
+#### Installation
+Using [conda](https://docs.conda.io/en/latest/miniconda.html) for managing virtual environments.
+
+    $ git clone https://github.com/RichLin56/Semantic-Segmentation.git
+    $ cd path/to/Semantic-Segmentation/
+    $ conda create -n pytorch_semseg python==3.7
+    $ activate pytorch_semseg
+    $ pip install -r requirements_windows.txt
+    
+## Custom dataset
+The custom dataset must contain training and validation pairs of images and masks. If a testset is available it should be next to `train` and `val` folders as `test`.
+#### Dataset structure
+                    
+        dataset           # path:  /path/to/dataset
+         ├── train
+         |    ├──images
+         |    |   └──image_1.extension
+         |    |   └──image_2.extension
+         |    |   └──...
+         |    ├──masks
+         |    |   └──mask_1.extension
+         |    |   └──mask_2.extension
+         |        
+         |    
+         ├── val
+         |    ├──images
+         |    |   └──image_1.extension
+         |    |   └──image_2.extension
+         |    |   └──...
+         |    ├──masks
+         |    |   └──mask_1.extension
+         |    |   └──mask_2.extension
+         |        
+         |  
+         ├── test (Optional)
+         |    ├──images
+         |    |   └──image_1.extension
+         |    |   └──image_2.extension
+         |    |   └──...
+         |    ├──masks
+         |    |   └──mask_1.extension
+         |    |   └──mask_2.extension
+         
+         
+Format of images can be Grayscale or RGB.
+Format of masks has to be the following:
+- Same size as the image it belongs to
+- Grayscale image or 2D-array
+- Classes are encoded in integer values, starting with 0 (e.g. 5 class segmentation would have masks with integer values ranging from 0 to 4)
+ 
 
 The following models are currently provided:
 - [U-Net](https://arxiv.org/pdf/1505.04597.pdf)
