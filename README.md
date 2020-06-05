@@ -3,6 +3,10 @@
 This repository is a pytorch implementation of semantic segmentation models. It comes with a general dataloader and functions for data transforming and augmentation based on numpy and scikit-image. 
 This repository aims at providing a small framework to easily train and test semantic segmentation models.
 
+#### Caution
+This repository is not maintained on a daily basis an is very likely to contain some mistakes since i'm using it rarely.
+If you stumble upon this repo, you might find some code fragments interesting after all. If so, do not hesitate to use them in your own code.
+
 ## Requirements
 #### Python >= 3.7, CUDA Toolkit 10.1
 
@@ -96,16 +100,34 @@ Evaluation during validation or test phase based on min(loss function) or max(me
 - __(Binary) Dice Metric__
 
 ## Logging
-- __info.log__ which logs what is happening and will be copied to your output directory after the script is done or stay in /Semantic-Segmentation/log/ if something cause the script to crash
-- __Tensorboard__, files for logging with Tensorboard will be stored in the given output directory
+- __info.log__ which logs what is happening and will be copied to your output directory after the script is done or stay in `path/to/Semantic-Segmentation/log/` if something cause the script to crash
+- __Tensorboard__, files for logging with Tensorboard will be stored in `path/to/output_dir/`
 
 ### Logging with Tensorboard
     $ activate pytorch_semseg
     $ tensorboard --logdir path/to/output_dir/
 
+## Train
+    $ cd path/to/Semantic-Segmentation/
+    $ activate pytorch_semseg
+    $ python train.py -c path/to/config.jsonc
 
-All settings can be set via the config.jsonc file:
- 
+## Configuration through train_config.json
+The following settings for training can be configured through the train_config.json:
+- **Optimizer**
+  - All Optimizers from [torch.optim](https://pytorch.org/docs/stable/optim.html#algorithms) available
+  - Parameters as dictionary keys & values (`see below for example in config.jsonc` )
+- **Learning Rate Scheduler**
+  - All Learning Rate Schedulers from [torch.optim.lr_scheduler](https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate) available
+  - Parameters as dictionary keys & values (`see below for example in config.jsonc` )
+- **Augmentation**
+  - All Augmentation techniques described above available
+  - Transformations are executed from top to bottom (`see below for example in config.jsonc` )
+- **Data Processing**
+  - All data processing techniques described above available
+  - Transformations are executed from top to bottom (`see below for example in config.jsonc` )
+  
+#### Example config.jsonc 
 
       {	
          "training":
@@ -203,8 +225,6 @@ You have two ways of excluding augmentation/data_processing from your training/v
  1. Set the field "ACTIVATE" to "False" (recommended)
  2. Delete the not wanted augmentation/data_processing from the config.jsonc
  
-This repository was developed and used (from me) during my master thesis at [LfB](https://www.lfb.rwth-aachen.de/en/).
-
 
 ## To do:
 - [ ] TODOs in predict.py
