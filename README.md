@@ -184,13 +184,14 @@ The following settings for training can be configured by the config.jsonc:
                "data": 
                {
                   "root": "/path/to/data_split/",     // Contains folders "train", "val", ("test")
-                  "extension": "",                    // One of: "", ".npz", ".png", ".jpg", ...
+				  "extension_image": "",  			  // One of: "", ".npz", ".npy", ".png", ".jpg", ...
+				  "extension_mask": "", 		      // One of: "", ".npz", ".npy", ".png", ".jpg", ...
                   "batch_size": 4,
                   "num_workers": 0
                },   
                "network":                             // Fully convolutional networks
                {
-                  "name": "fcdensenet",               // One of: "fcdensenet", "unet"
+                  "name": "fcdensenet",               // One of: "fcdensenet", "unet", "uresnet"
                   "pretrained": "",                   // Pretrained from path/to/checkpoint.pth.tar
                   "in_channels": 1,                   // Further arguments possible
                   "out_channels": 1,                  // ...
