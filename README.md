@@ -96,8 +96,12 @@ Evaluation during validation or test phase based on min(loss function) or max(me
 - __(Binary) Dice Metric__
 
 ## Logging
-- __info.log__ which will be copied to your output directory after the script is done
-- __Tensorboard__, with log file in output directory
+- __info.log__ which logs what is happening and will be copied to your output directory after the script is done or stay in /Semantic-Segmentation/log/ if something cause the script to crash
+- __Tensorboard__, files for logging with Tensorboard will be stored in the given output directory
+
+### Logging with Tensorboard
+    $ activate pytorch_semseg
+    $ tensorboard --logdir path/to/output_dir/
 
 
 All settings can be set via the config.jsonc file:
