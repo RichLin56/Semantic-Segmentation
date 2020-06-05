@@ -74,7 +74,8 @@ In the current state of this repo, each model can be included to this framework 
 - __self.in_channels__ must be available as class variable and has to be set in the constructor(`__init__()`). It represents the number of channels of the images that will be fed to the model (e.g. in_channels=3 for RGB images).
 - __self.out_channels__ must be available as class variable and has to be set in the constructor(`__init__()`). It represents the number of classes which have to be predicted.
 - The `model returns the output of the final convolution` without any applications of non-linearities.
-
+- The `file in which the model is defined has the same name as the model class` (e.g. unet.py and class UNet(nn.module))
+- Any model which fulfills the criteria above can be put into `path/to/Semantic-Segmentation/models`and should then be ready to go. Training can be started by using the config.jsonc and putting the name of the model (not case sensitive) to it.
 
 ## Loss functions:
 - __Dice Loss__
