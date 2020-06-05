@@ -3,7 +3,7 @@
 This repository is a pytorch implementation of semantic segmentation models. It comes with a general dataloader and functions for data transforming and augmentation based on numpy and scikit-image. 
 This repository aims at providing a small framework to easily train and test semantic segmentation models.
 
-### Caution
+### Caution: Currently Under Construction!
 `This repository is not maintained on a daily basis an is very likely to contain some mistakes since i'm using it rarely.
 If you stumble upon this repo, you might find some code fragments interesting after all. If so, do not hesitate to use them in your own code.`
 
