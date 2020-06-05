@@ -112,8 +112,8 @@ Evaluation during validation or test phase based on min(loss function) or max(me
     $ activate pytorch_semseg
     $ python train.py -c path/to/config.jsonc
 
-## Configuration through train_config.json
-The following settings for training can be configured through the train_config.json:
+## Configuration with config.jsonc
+The following settings for training can be configured by the config.jsonc:
 - **Optimizer**
   - All Optimizers from [torch.optim](https://pytorch.org/docs/stable/optim.html#algorithms) available
   - Parameters as dictionary keys & values (`see below for example in config.jsonc` )
