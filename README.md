@@ -58,7 +58,7 @@ Images and masks are matched by their name (extensions can differ).
 - Same size as the image it belongs to
 - If it comes __as image__ -> `Grayscale image (2D)` (all common extensions allowed, handled by PIL)
 - If it comes __as 2D numpy array__ -> make sure its dimensions are in this order `(HxW)`
-- Classes are encoded in integer values, starting with 0 (e.g. 5 class segmentation would have masks with integer values ranging from 0 to 4)
+- __Classes are encoded in integer values__, starting with 0 (e.g. 5 class segmentation would have masks with integer values ranging from 0 to 4)
  
 ## Models
 The following models are currently provided:
