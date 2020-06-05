@@ -50,40 +50,51 @@ The custom dataset must contain training and validation pairs of images and mask
          |    |   └──mask_2.extension
          
          
-Format of images can be Grayscale or RGB.
-Format of masks has to be the following:
+#### Format of images can be Grayscale or RGB.
+
+#### Format of masks has to be the following:
 - Same size as the image it belongs to
 - Grayscale image or 2D-array
 - Classes are encoded in integer values, starting with 0 (e.g. 5 class segmentation would have masks with integer values ranging from 0 to 4)
  
-
+## Models
 The following models are currently provided:
 - [U-Net](https://arxiv.org/pdf/1505.04597.pdf)
+- [U-Net with pretrained ResNet50-backbone]
 - [Fully Convolutional DenseNet](https://arxiv.org/pdf/1611.09326.pdf)
 
-With the following loss functions:
-- Dice Loss 
-- Cross Entropy Loss 
-- Binary Dice Loss
-- Binary Cross Entropy Loss
+In the current state of this repo, each model can be included to this framework which fulfills the following criteria:
+- __self.in_channels__ must be available as class variable and has to be set in the constructor(`__init__()`). It represents the number of channels of the images that will be fed to the model (e.g. in_channels=3 for RGB images).
+- __self.out_channels__ must be available as class variable and has to be set in the constructor(`__init__()`). It represents the number of classes which have to be predicted.
+- The `model returns the output of the final convolution` without any applications of non-linearities.
 
-Provided augmentation techniques:
-- Random Affine Transformation
-- Random Crop
-- Random Flip 
-- Random Gaussian Blur
 
-Provided transformations:
-- Normalization (max, min_max, max_value)
-- Resize
-- Center Crop
+## Loss functions:
+- __Dice Loss__
+- __Cross Entropy Loss__
+- __Binary Dice Loss__
+- __Binary Cross Entropy Loss__
 
-Model evaluation based on min(loss function) or max(metric):
-- Dice Metric
+## Augmentation techniques:
+Augmentations are only applied to images and masks during training phase.
+- __Random Affine Transformation__
+- __Random Crop__
+- __Random Flip__ 
+- __Random Gaussian Blur__
 
-Provided logging:
-- info.log which will be copied to your output directory after the script is done
-- Tensorboard, with log file in output directory
+## Provided transformations:
+Transformations are applied to images and masks(sometimes, e.g. masks dont need to be normalized) during training, validation and testing phase.
+- __Normalization__ (max, min_max, max_value)
+- __Resize__
+- __Center Crop__
+
+## Model evaluation
+Evaluation during validation or test phase based on min(loss function) or max(metric):
+- __(Binary) Dice Metric__
+
+## Logging
+- __info.log__ which will be copied to your output directory after the script is done
+- __Tensorboard__, with log file in output directory
 
 
 All settings can be set via the config.jsonc file:
