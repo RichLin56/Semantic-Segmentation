@@ -49,12 +49,15 @@ The custom dataset must contain training and validation pairs of images and mask
          |    |   └──mask_1.extension
          |    |   └──mask_2.extension
          
-         
-#### Format of images can be Grayscale or RGB.
+Images and masks are matched by their name (extensions can differ).     
+#### Format of images has to be the following:
+- If it comes __as image__ -> `Gray or RGB image` (all common extensions allowed, handled by PIL)
+- If it comes __as numpy array__ -> make sure its dimensions are in this order `(HxWxC)`
 
 #### Format of masks has to be the following:
 - Same size as the image it belongs to
-- Grayscale image or 2D-array
+- If it comes __as image__ -> `Grayscale image (2D)` (all common extensions allowed, handled by PIL)
+- If it comes __as 2D numpy array__ -> make sure its dimensions are in this order `(HxW)`
 - Classes are encoded in integer values, starting with 0 (e.g. 5 class segmentation would have masks with integer values ranging from 0 to 4)
  
 ## Models
