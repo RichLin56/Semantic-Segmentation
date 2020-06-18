@@ -93,7 +93,7 @@ class DiceLoss(nn.Module):
     def forward(self, predict, target):
         predict = torch.softmax(predict, dim=1)  # Apply softmax
         target = utils.misc.one_hot_encoder(labels=target.squeeze(
-        ), num_classes=predict.shape[1])  # Apply one_hot_encoding
+        ).long(), num_classes=predict.shape[1])  # Apply one_hot_encoding
         # Predict shape: NxCxd1xd2xdn -> NxCxD (D=d1*d2*...dn)
         # Predict dtype: float()
         predict = predict.contiguous().view(
