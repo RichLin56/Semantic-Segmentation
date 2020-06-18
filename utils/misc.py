@@ -9,6 +9,7 @@ import importlib
 import inspect
 import os
 from datetime import datetime
+from PIL import Image
 
 import numpy as np
 import torch
@@ -53,13 +54,18 @@ def one_hot_encoder(labels, num_classes):
 
     batch_size, height, width = labels.shape
 
-    one_hot = torch.zeros(batch_size, num_classes, height, width)
+    one_hot = torch.zeros(batch_size, num_classes, height, width).to(labels.device)
     one_hot = one_hot.scatter_(1, labels.unsqueeze(1), 1.0)
     return one_hot
 
 
-def overlay_img_mask():
-    pass
+
+def overlay_img_mask(background, overlay):
+    background = background.convert("RGBA")
+    overlay = overlay.convert("RGBA")
+    new_img = Image.blend(background, overlay, 0.5)
+    return new_img
+    
 
 
 def tensor_to_numpy(tensor):
