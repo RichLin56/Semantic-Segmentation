@@ -1,8 +1,18 @@
 import torch
 import torch.nn as nn
 import torchvision
-resnet = torchvision.models.resnet.resnet50(pretrained=True)
 
+
+def load_resnet(name: str):
+    backbones = ["resnet50", "resnet101", "resnet152"]
+    assert (name in backbones), '{0} does not exist in {1}'.format(name, backbones)
+    if name == "resnet50":
+        return torchvision.models.resnet.resnet50(pretrained=True)
+    elif name == "resnet101":
+        return torchvision.models.resnet.resnet101(pretrained=True)
+    elif name == "resnet152":
+        return torchvision.models.resnet.resnet101(pretrained=True)
+        
 
 class ConvBlock(nn.Module):
     """
@@ -40,7 +50,7 @@ class Bridge(nn.Module):
         return self.bridge(x)
 
 
-class UpBlockForUNetWithResNet50(nn.Module):
+class UpBlockForUNetWithResNet(nn.Module):
     """
     Up block that encapsulates one up-sampling step which consists of Upsample -> ConvBlock -> ConvBlock
     """
@@ -53,7 +63,7 @@ class UpBlockForUNetWithResNet50(nn.Module):
             up_conv_in_channels = in_channels
         if up_conv_out_channels == None:
             up_conv_out_channels = out_channels
-
+        #TODO: Bug with bilinear upsampling
         if upsampling_method == "conv_transpose":
             self.upsample = nn.ConvTranspose2d(up_conv_in_channels, up_conv_out_channels, kernel_size=2, stride=2)
         elif upsampling_method == "bilinear":
@@ -79,14 +89,15 @@ class UpBlockForUNetWithResNet50(nn.Module):
 
 class UResNet(nn.Module):
 
-    def __init__(self, in_channels, out_channels, depth=6):
+    def __init__(self, in_channels, out_channels, backbone="resnet50", upsampling_method="conv_transpose"):
         super().__init__()
-        resnet = torchvision.models.resnet.resnet50(pretrained=True)
+        resnet = load_resnet(backbone)
         down_blocks = []
         up_blocks = []
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.depth = depth        
+        self.depth = 6   
+        self.upsampling_method = upsampling_method    
         self.input_block = nn.Sequential(*list(resnet.children()))[:3]
 
         if self.in_channels == 1:
@@ -99,13 +110,15 @@ class UResNet(nn.Module):
                 down_blocks.append(bottleneck)
         self.down_blocks = nn.ModuleList(down_blocks)
         self.bridge = Bridge(2048, 2048)
-        up_blocks.append(UpBlockForUNetWithResNet50(2048, 1024))
-        up_blocks.append(UpBlockForUNetWithResNet50(1024, 512))
-        up_blocks.append(UpBlockForUNetWithResNet50(512, 256))
-        up_blocks.append(UpBlockForUNetWithResNet50(in_channels=128 + 64, out_channels=128,
-                                                    up_conv_in_channels=256, up_conv_out_channels=128))
-        up_blocks.append(UpBlockForUNetWithResNet50(in_channels=64 + self.in_channels, out_channels=64,
-                                                    up_conv_in_channels=128, up_conv_out_channels=64))
+        up_blocks.append(UpBlockForUNetWithResNet(2048, 1024, upsampling_method=self.upsampling_method))
+        up_blocks.append(UpBlockForUNetWithResNet(1024, 512, upsampling_method=self.upsampling_method))
+        up_blocks.append(UpBlockForUNetWithResNet(512, 256, upsampling_method=self.upsampling_method))
+        up_blocks.append(UpBlockForUNetWithResNet(in_channels=128 + 64, out_channels=128,
+                                                    up_conv_in_channels=256, up_conv_out_channels=128,
+                                                    upsampling_method=self.upsampling_method))
+        up_blocks.append(UpBlockForUNetWithResNet(in_channels=64 + self.in_channels, out_channels=64,
+                                                    up_conv_in_channels=128, up_conv_out_channels=64,
+                                                    upsampling_method=self.upsampling_method))
 
         self.up_blocks = nn.ModuleList(up_blocks)
 
@@ -120,7 +133,7 @@ class UResNet(nn.Module):
 
         for i, block in enumerate(self.down_blocks, 2):
             x = block(x)
-            if i == (self.depth- 1):
+            if i == (self.depth - 1):
                 continue
             pre_pools[f"layer_{i}"] = x
 
@@ -136,3 +149,8 @@ class UResNet(nn.Module):
             return x, output_feature_map
         else:
             return x
+
+if __name__ == "__main__":
+    model = UResNet(1, 1, backbone="resnet101", upsampling_method="conv_transpose")
+    ins = torch.ones((1, 1, 224, 224))
+    outs = model(ins)
