@@ -37,10 +37,12 @@ class Predicter(object):
         output = self.model(image)    
 
         if self.model.out_channels == 1:
-            output = torch.sigmoid(output)  
+            probs = torch.sigmoid(output)  
+            # TODO: Threshold here
+            output = self.__threshold(probs)[0]
         else:
-            output = torch.softmax(output)    
-        output = output.squeeze(0)    
+            output = torch.nn.Softmax2d()(output)  
+            probs, output = torch.max(output, 1)           
 
         return misc.tensor_to_numpy(output), misc.tensor_to_numpy(image)    
 
@@ -56,7 +58,7 @@ class Predicter(object):
     def predict(self, image_path):
         image = np.array(Image.open(image_path))
         outputs, inputs = self.__predict(image)
-        outputs = self.__threshold(outputs)
+        #outputs = self.__threshold(outputs)
 
         img_input = misc.scale_uint8(inputs[0])
         img_input = misc.chw_to_hwc(img_input)        
@@ -68,12 +70,15 @@ class Predicter(object):
         img_output = np.array([misc.scale_uint8(outputs[i]) for i in range(outputs.shape[0])])
         img_output = misc.chw_to_hwc(img_output)
         if img_output.shape[-1] == 1:
-            img_output = Image.fromarray(img_output[:, :, 0])
+            img_output = Image.fromarray(img_output[:, :, 0].astype(np.uint8))
         else:
             # TODO: Does this case occur? If so: Implement this
             pass
         img_output.save(os.path.join(self.output_dir, "pred_" + os.path.basename(image_path)))
         img_input.save(os.path.join(self.output_dir, "org_" + os.path.basename(image_path)))
+
+        overlay = misc.overlay_img_mask(img_input, img_output)
+        overlay.save(os.path.join(self.output_dir, "blend_" + os.path.basename(image_path.replace('jpg', 'png'))))
 
 
 
