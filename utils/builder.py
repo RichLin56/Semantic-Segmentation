@@ -66,6 +66,8 @@ class CriterionBuilder(Builder):
         if 'pos_weight' in params_from_dict:
             params_from_dict['pos_weight'] = torch.tensor(
                 int(params_from_dict['pos_weight']))
+        if 'weight' in params_from_dict:
+            params_from_dict['weight'] = torch.tensor(params_from_dict['weight'])
         self.criterion = self._Builder__build(**params_from_dict).to(device)
 
 
