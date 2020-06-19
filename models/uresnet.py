@@ -4,15 +4,23 @@ import torchvision
 
 
 def load_resnet(name: str):
-    backbones = ["resnet50", "resnet101", "resnet152"]
+    backbones = ["resnet50", "resnet101", "resnet152", "wide_resnet50", "wide_resnet101", "resnext50", "resnext101"]
     assert (name in backbones), '{0} does not exist in {1}'.format(name, backbones)
     if name == "resnet50":
         return torchvision.models.resnet.resnet50(pretrained=True)
     elif name == "resnet101":
         return torchvision.models.resnet.resnet101(pretrained=True)
     elif name == "resnet152":
-        return torchvision.models.resnet.resnet101(pretrained=True)
-        
+        return torchvision.models.resnet.resnet152(pretrained=True)
+    elif name == "wide_resnet50":
+        return torchvision.models.wide_resnet50_2(pretrained=True)
+    elif name == "wide_resnet101":
+        return torchvision.models.wide_resnet101_2(pretrained=True)
+    elif name == "resnext50":
+        return torchvision.models.resnext50_32x4d(pretrained=True)
+    elif name == "resnext101":
+        return torchvision.models.resnext101_32x8d(pretrained=True)        
+
 
 class ConvBlock(nn.Module):
     """
@@ -151,6 +159,6 @@ class UResNet(nn.Module):
             return x
 
 if __name__ == "__main__":
-    model = UResNet(1, 1, backbone="resnet101", upsampling_method="conv_transpose")
+    model = UResNet(1, 1, backbone="resnext101", upsampling_method="conv_transpose")
     ins = torch.ones((1, 1, 224, 224))
     outs = model(ins)
