@@ -37,7 +37,7 @@ __LOGGER.info('Checking arguments...')
 assert os.path.isfile(
     args.config_path), '{} does not exist'.format(args.config_path)
 
-__LOGGER.info('***Starting "Semantic-Segmentation" version %s***' %
+__LOGGER.info('***Starting "Semantic-Segmentation Prediction" version %s***' %
               __version__)
 cfg = utils.configuration.load_config_json(
     args.config_path, config_group='prediction')
@@ -47,20 +47,17 @@ assert os.path.isdir(
     cfg['input_dir']), '{} does not exist'.format(cfg['input_dir'])
 input_dir = cfg['input_dir']
 
-
 # Define device
-device = torch.device(cfg['gpu_id'] if (torch.cuda.is_available() and cfg['gpu_id'] in range(torch.cuda.device_count()))  else "cpu")
+device = torch.device(cfg['gpu_id'] if (torch.cuda.is_available() and cfg['gpu_id'] in range(torch.cuda.device_count())) else "cpu")
 __LOGGER.info('Setting up device, using {}...'.format(device))
 # Setup augmentation & data processing
 __LOGGER.info('Setting up data processing...')
 data_processing = utils.configuration.load_funcs_by_name(
     module=utils.augmentation, config_dict=cfg['data_processing'])
-
 # Setup model
 __LOGGER.info('Setting up model...')
 model = utils.builder.ModelBuilder(
     group_cfg=cfg['network'], package=models, device=device)
-
 # Prediction
 __LOGGER.info('Starting prediction...')
 predicter = utils.predicter.Predicter(model=model, 

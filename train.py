@@ -35,7 +35,7 @@ __LOGGER.info('Checking arguments...')
 assert os.path.isfile(
     args.config_path), '{} does not exist'.format(args.config_path)
 
-__LOGGER.info('***Starting "Semantic-Segmentation" version %s***' %
+__LOGGER.info('***Starting "Semantic-Segmentation Training" version %s***' %
               __version__)
 cfg = utils.configuration.load_config_json(
     args.config_path, config_group='training')
@@ -58,10 +58,12 @@ train_loader = SemSegDataLoader(
 val_loader = SemSegDataLoader(
     subset='val', data_processing=data_processing, **cfg['data'])
 data_train = {'train': train_loader, 'val': val_loader}
+
 if cfg['test_afterwards']:
     test_loader = SemSegDataLoader(
         subset='test', data_processing=data_processing, **cfg['data'])
     data_test = {'test': test_loader}
+
 # Setup metric
 __LOGGER.info('Setting up metric...')
 val_meter = utils.misc.MetricMeter(
